@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.binhnk.clean.architecture.ui.main.MainViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:focusable="true">
+
+        <TextView
+            android:id="@+id/tv_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_14sdp"
+            android:text="No data"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/_13sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_refresh_layout"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            app:layout_constraintBottom_toTopOf="@id/tv_page_1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_user"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        <TextView
+            android:id="@+id/tv_page_1"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_36sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:background="@drawable/bg_button_selected"
+            android:gravity="center"
+            android:onClick="@{view-> viewModel.changePage(1)}"
+            android:paddingStart="@dimen/_14sdp"
+            android:paddingEnd="@dimen/_14sdp"
+            android:text="Page 1"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/_13sdp"
+            app:layout_constraintBottom_toTopOf="@id/tv_all"
+            app:layout_constraintEnd_toStartOf="@id/tv_page_2"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_page_2"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_36sdp"
+            android:background="@drawable/bg_button_normal"
+            android:gravity="center"
+            android:onClick="@{view-> viewModel.changePage(2)}"
+            android:paddingStart="@dimen/_14sdp"
+            android:paddingEnd="@dimen/_14sdp"
+            android:text="Page 2"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/_13sdp"
+            app:layout_constraintBottom_toBottomOf="@id/tv_page_1"
+            app:layout_constraintEnd_toStartOf="@id/tv_page_3"
+            app:layout_constraintStart_toEndOf="@id/tv_page_1" />
+
+        <TextView
+            android:id="@+id/tv_page_3"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_36sdp"
+            android:background="@drawable/bg_button_normal"
+            android:gravity="center"
+            android:onClick="@{view-> viewModel.changePage(3)}"
+            android:paddingStart="@dimen/_14sdp"
+            android:paddingEnd="@dimen/_14sdp"
+            android:text="Page 3"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/_13sdp"
+            app:layout_constraintBottom_toBottomOf="@id/tv_page_1"
+            app:layout_constraintEnd_toStartOf="@id/tv_page_4"
+            app:layout_constraintStart_toEndOf="@id/tv_page_2" />
+
+        <TextView
+            android:id="@+id/tv_page_4"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_36sdp"
+            android:background="@drawable/bg_button_normal"
+            android:gravity="center"
+            android:onClick="@{view-> viewModel.changePage(4)}"
+            android:paddingStart="@dimen/_14sdp"
+            android:paddingEnd="@dimen/_14sdp"
+            android:text="Page 4"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/_13sdp"
+            app:layout_constraintBottom_toBottomOf="@id/tv_page_1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_page_3" />
+
+        <TextView
+            android:id="@+id/tv_all"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_36sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:background="@drawable/bg_button_normal"
+            android:gravity="center"
+            android:onClick="@{view-> viewModel.changePage(0)}"
+            android:paddingStart="@dimen/_14sdp"
+            android:paddingEnd="@dimen/_14sdp"
+            android:text="All pages"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/_13sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/tv_page_4"
+            app:layout_constraintStart_toStartOf="@id/tv_page_1" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
