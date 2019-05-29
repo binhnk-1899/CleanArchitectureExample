@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import com.binhnk.clean.architecture.base.BaseViewModel
 import com.binhnk.clean.architecture.domain.usecase.user.GetUserUseCase
 import com.binhnk.clean.architecture.domain.usecase.user.InsertToDBUseCase
+import com.binhnk.clean.architecture.domain.usecase.user.QueryUserUseCase
 import com.binhnk.clean.architecture.model.UserItem
 import com.binhnk.clean.architecture.model.UserItemMapper
 import com.binhnk.clean.architecture.rx.SchedulerProvider
@@ -18,9 +19,10 @@ import io.reactivex.functions.Function4
 class MainViewModel(
     private val getUserUseCase: GetUserUseCase,
     private val insertUserUseCase: InsertToDBUseCase,
+    private val queryUserUseCase: QueryUserUseCase,
     private val schedulerProvider: SchedulerProvider,
     private val userItemMapper: UserItemMapper
-) : BaseViewModel(getUserUseCase) {
+) : BaseViewModel(getUserUseCase, insertUserUseCase, queryUserUseCase) {
 
     val data = MutableLiveData<List<UserItem>>()
     val page = MutableLiveData<Int>().apply {
@@ -79,6 +81,12 @@ class MainViewModel(
             Function4<List<UserItem>, List<UserItem>, List<UserItem>, List<UserItem>, List<UserItem>> { t1, t2, t3, t4 ->
                 collectAllList(t1, t2, t3, t4)
             })
+            .map {
+                for (u in it) {
+                    u.addedInDB = checkUserState(u)
+                }
+                it
+            }
             .subscribeOn(schedulerProvider.io())
             .observeOn(schedulerProvider.ui())
             .doFinally { loading.value = false }
@@ -88,6 +96,29 @@ class MainViewModel(
                 },
                 { Throwable("Data not found") }
             )
+    }
+
+    /**
+     * check user exist in database
+     */
+    private fun checkUserState(mUser: UserItem): Boolean {
+        var b = false
+        queryUserUseCase.createObservable(QueryUserUseCase.Params(mUser.id))
+            .map { result ->
+                userItemMapper.mapToPresentation(result)
+            }
+            .subscribeOn(schedulerProvider.io())
+            .observeOn(schedulerProvider.io())
+            .subscribe({
+                b = true
+                mUser.addedInDB = true
+                Log.e("Ahihi", "Not null")
+            }, {
+                b = false
+                mUser.addedInDB = false
+                Log.e("Ahihi", "Null")
+            })
+        return b
     }
 
     /**

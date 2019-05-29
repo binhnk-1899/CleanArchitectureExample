@@ -8,5 +8,5 @@ import retrofit2.http.Query
 interface UserApi {
 
     @GET("api/users")
-    fun getAllUsersUsingRx(@Query("page") page: String): Single<GetUserResponse>
+    fun getUserByPage(@Query("page") page: String): Single<GetUserResponse>
 }

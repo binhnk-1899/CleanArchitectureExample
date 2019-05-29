@@ -13,12 +13,19 @@ class UserRepositoryImpl(
     private val userEntityMapper: UserEntityMapper
 ) : UserRepository {
 
+    override fun getUserByUserId(userId: Int): Single<User?> {
+        return userDao.getUserByUserId(userId = userId)
+            .map { result ->
+                userEntityMapper.mapToDomain(result)
+            }.doOnError { Single.just(null) }
+    }
+
     override fun insertUserToDB(user: User): Long {
         return userDao.insertUserByRx(user = userEntityMapper.mapToEntity(user))
     }
 
     override fun getUsersUsingRx(page: Int?): Single<List<User>> {
-        return userApi.getAllUsersUsingRx(page = if (page == null) "0" else "$page")
+        return userApi.getUserByPage(page = if (page == null) "0" else "$page")
             .map { response ->
                 response.users.map { userEntityMapper.mapToDomain(it) }
             }

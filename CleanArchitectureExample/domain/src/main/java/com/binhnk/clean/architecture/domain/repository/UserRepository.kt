@@ -14,4 +14,9 @@ interface UserRepository : Repository {
      * insert user to database
      */
     fun insertUserToDB(user: User): Long
+
+    /**
+     * get user by user id
+     */
+    fun getUserByUserId(userId: Int): Single<User?>
 }

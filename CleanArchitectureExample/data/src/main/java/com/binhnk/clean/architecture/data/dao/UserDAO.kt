@@ -4,12 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.binhnk.clean.architecture.data.model.UserEntity
 import io.reactivex.Flowable
+import io.reactivex.Single
 
 @Dao
 interface UserDAO {
 
     @Query("SELECT * FROM users WHERE id = :userId")
-    fun getUserByUserId(userId: Int): UserEntity?
+    fun getUserByUserId(userId: Int): Single<UserEntity?>
 
     @Query("SELECT * FROM users WHERE page = :page")
     fun getUsersByPage(page: Int): List<UserEntity>
