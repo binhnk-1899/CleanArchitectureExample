@@ -1,16 +1,22 @@
 package com.binhnk.clean.architecture.ui.main
 
 import android.content.Context
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.binhnk.clean.architecture.R
 import com.binhnk.clean.architecture.model.UserItem
 import com.bumptech.glide.Glide
+import com.google.gson.Gson
 import de.hdodenhof.circleimageview.CircleImageView
+import org.json.JSONArray
+import org.json.JSONException
 
 class UserAdapter(
         private val mContext: Context,
@@ -45,18 +51,18 @@ class UserAdapter(
                 .centerCrop()
                 .into(holderUser.imAvatar)
 
-//        if (showChecking) {
-//            if (mObj.addedInDB) {
-//                holderUser.tvUserName.setTextColor(ContextCompat.getColor(mContext, R.color.colorPrimary))
-//                holderUser.imChecked.visibility = View.VISIBLE
-//            } else {
-//                holderUser.tvUserName.setTextColor(Color.BLACK)
-//                holderUser.imChecked.visibility = View.INVISIBLE
-//            }
-//        } else {
-//            holderUser.tvUserName.setTextColor(Color.BLACK)
-//            holderUser.imChecked.visibility = View.INVISIBLE
-//        }
+        if (showChecking) {
+            if (mObj.addedInDB) {
+                holderUser.tvUserName.setTextColor(ContextCompat.getColor(mContext, R.color.colorPrimary))
+                holderUser.imChecked.visibility = View.VISIBLE
+            } else {
+                holderUser.tvUserName.setTextColor(Color.BLACK)
+                holderUser.imChecked.visibility = View.INVISIBLE
+            }
+        } else {
+            holderUser.tvUserName.setTextColor(Color.BLACK)
+            holderUser.imChecked.visibility = View.INVISIBLE
+        }
 
         holderUser.itemView.setOnClickListener {
             mCallback.onItemClicked(mObj)
@@ -127,10 +133,12 @@ class UserAdapter(
         val tvUserName: TextView = itemView.findViewById(R.id.tv_user_name)
         val tvEmail: TextView = itemView.findViewById(R.id.tv_email)
         val imAvatar: CircleImageView = itemView.findViewById(R.id.im_avatar)
+        val imChecked: ImageView = itemView.findViewById(R.id.im_checked)
     }
 
     interface Callback {
         fun onItemClicked(mUserClicked: UserItem)
         fun onItemLongClicked(mUserClicked: UserItem)
     }
+
 }
