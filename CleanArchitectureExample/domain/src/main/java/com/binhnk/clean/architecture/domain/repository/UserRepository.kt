@@ -19,4 +19,9 @@ interface UserRepository : Repository {
      * get user by user id
      */
     fun getUserByUserId(userId: Int): Single<User?>
+
+    /**
+     * get all user
+     */
+    fun getAllUser(): Single<List<User>>
 }

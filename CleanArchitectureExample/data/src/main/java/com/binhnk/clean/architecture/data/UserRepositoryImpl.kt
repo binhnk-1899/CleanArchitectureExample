@@ -32,4 +32,10 @@ class UserRepositoryImpl(
             .doOnError { Throwable("Page not found!") }
     }
 
+    override fun getAllUser(): Single<List<User>> {
+        return userDao.getALlUser()
+            .map { response ->
+                response.map { userEntityMapper.mapToDomain(it) }
+            }
+    }
 }

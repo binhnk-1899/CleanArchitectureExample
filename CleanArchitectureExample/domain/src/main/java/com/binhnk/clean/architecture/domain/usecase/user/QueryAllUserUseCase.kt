@@ -5,18 +5,19 @@ import com.binhnk.clean.architecture.domain.repository.UserRepository
 import com.binhnk.clean.architecture.domain.usecase.UseCase
 import io.reactivex.Single
 
-class QueryUserUseCase(
+class QueryAllUserUseCase(
     private val userRepository: UserRepository
-) : UseCase<QueryUserUseCase.Params, Single<User?>>() {
+) : UseCase<QueryAllUserUseCase.Params, Single<List<User>>>() {
 
-    override fun createObservable(params: Params?): Single<User?> {
-        params?.let { return userRepository.getUserByUserId(userId = params.userId) }
-        return Single.just(null)
+    override fun createObservable(params: Params?): Single<List<User>> {
+        run {
+            return userRepository.getAllUser()
+        }
     }
 
     override fun onCleared() {
 
     }
 
-    data class Params(val userId: Int)
+    class Params
 }

@@ -6,7 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import com.binhnk.clean.architecture.base.BaseViewModel
 import com.binhnk.clean.architecture.domain.usecase.user.GetUserUseCase
 import com.binhnk.clean.architecture.domain.usecase.user.InsertToDBUseCase
-import com.binhnk.clean.architecture.domain.usecase.user.QueryUserUseCase
+import com.binhnk.clean.architecture.domain.usecase.user.QueryAllUserUseCase
+import com.binhnk.clean.architecture.domain.usecase.user.QueryUserByIDUseCase
 import com.binhnk.clean.architecture.model.UserItem
 import com.binhnk.clean.architecture.model.UserItemMapper
 import com.binhnk.clean.architecture.rx.SchedulerProvider
@@ -20,35 +21,47 @@ import io.reactivex.functions.Function4
 class MainViewModel(
     private val getUserUseCase: GetUserUseCase,
     private val insertUserUseCase: InsertToDBUseCase,
-    private val queryUserUseCase: QueryUserUseCase,
+    private val queryUserByIDUseCase: QueryUserByIDUseCase,
+    private val queryAllUserUseCase: QueryAllUserUseCase,
     private val schedulerProvider: SchedulerProvider,
     private val userItemMapper: UserItemMapper
-) : BaseViewModel(getUserUseCase, insertUserUseCase, queryUserUseCase) {
+) : BaseViewModel(getUserUseCase, insertUserUseCase, queryUserByIDUseCase) {
 
-    val data = MutableLiveData<List<UserItem>>()
+    val clientData = MutableLiveData<List<UserItem>>()
+    val localData = MutableLiveData<List<UserItem>>()
     val page = MutableLiveData<Int>().apply {
         postValue(1)
     }
-    val loading = MutableLiveData<Boolean>().apply {
+    val loadingClient = MutableLiveData<Boolean>().apply {
+        postValue(false)
+    }
+    val loadingLocal = MutableLiveData<Boolean>().apply {
         postValue(false)
     }
     val insertUserSuccess = MutableLiveData<UserItem>()
     val insertUserFailure = MutableLiveData<UserItem>()
+    val connectivityChanged = SingleLiveEvent<Unit>()
 
     /**
      * get user per page
      */
     fun getUser() {
         page.value?.let { input ->
-            loading.postValue(true)
+            loadingClient.postValue(true)
 
             compositeDisposable.add(
                 getUserSingle(input)
-                    .doFinally { loading.postValue(false) }
-                    .subscribe({ users ->
-                        data.postValue(users)
-                        Log.e("Ahihi", "${users.size}")
-                    }, { Log.e("Ahihi", it.message!!) })
+                    .doFinally { loadingClient.postValue(false) }
+                    .subscribe(
+                        { users ->
+                            clientData.postValue(users)
+                            Log.e("Ahihi", "${users.size}")
+                        }, {
+                            clientData.postValue(ArrayList())
+                            it.printStackTrace()
+                            Log.e("Ahihi", it.localizedMessage!!)
+                        }
+                    )
             )
         }
     }
@@ -73,7 +86,7 @@ class MainViewModel(
      */
     @SuppressLint("CheckResult")
     fun getAllUser() {
-        loading.postValue(true)
+        loadingClient.postValue(true)
 
         val userObservable1 = getUserSingle(1)
         val userObservable2 = getUserSingle(2)
@@ -87,12 +100,15 @@ class MainViewModel(
             })
             .subscribeOn(schedulerProvider.io())
             .observeOn(schedulerProvider.ui())
-            .doFinally { loading.value = false }
+            .doFinally { loadingClient.value = false }
             .subscribe(
                 { result ->
-                    data.postValue(result)
+                    clientData.postValue(result)
                 },
-                { Throwable("Data not found") }
+                {
+                    clientData.postValue(ArrayList())
+                    Throwable("Data not found")
+                }
             )
     }
 
@@ -101,7 +117,7 @@ class MainViewModel(
      */
     private fun checkUserState(mUser: UserItem): UserItem {
         compositeDisposable.add(
-            queryUserUseCase.createObservable(QueryUserUseCase.Params(mUser.id))
+            queryUserByIDUseCase.createObservable(QueryUserByIDUseCase.Params(mUser.id))
                 .map { result ->
                     userItemMapper.mapToPresentation(result)
                 }
@@ -174,5 +190,32 @@ class MainViewModel(
                     Log.e("Ahihi", "Insert Error")
                 }
             })
+    }
+
+    /**
+     * query all user in Room database
+     */
+    fun queryAllUser() {
+        loadingLocal.postValue(true)
+
+        compositeDisposable.add(
+            queryAllUserUseCase.createObservable(null)
+                .map { users ->
+                    users.map {
+                        userItemMapper.mapToPresentation(it)
+                    }
+                }
+                .subscribeOn(schedulerProvider.io())
+                .observeOn(schedulerProvider.ui())
+                .doFinally { loadingLocal.postValue(false) }
+                .subscribe(
+                    { result ->
+                        localData.postValue(result)
+                    },
+                    {
+                        Throwable("Data not found")
+                    }
+                )
+        )
     }
 }

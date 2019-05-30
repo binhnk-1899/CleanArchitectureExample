@@ -11,7 +11,6 @@ import com.binhnk.clean.architecture.R
 import com.binhnk.clean.architecture.base.BaseFragment
 import com.binhnk.clean.architecture.model.UserItem
 import com.binhnk.clean.architecture.util.Utils
-import com.bumptech.glide.util.Util
 import kotlinx.android.synthetic.main.fragment_main.*
 import org.koin.androidx.viewmodel.ext.sharedViewModel
 
@@ -45,7 +44,7 @@ class MainFragment :
         rv_user.adapter = mAdapter
 
         viewModel.run {
-            data.observe(this@MainFragment, Observer {
+            clientData.observe(this@MainFragment, Observer {
                 mAdapter.updateAdapter(ArrayList(it))
                 rv_user.smoothScrollToPosition(0)
                 if (it.isNullOrEmpty()) {
@@ -64,7 +63,7 @@ class MainFragment :
                 updatePageState(it)
             })
 
-            loading.observe(this@MainFragment, Observer {
+            loadingClient.observe(this@MainFragment, Observer {
                 swipe_refresh_layout.isRefreshing = it
             })
 
@@ -80,6 +79,14 @@ class MainFragment :
                 if (it != null) {
                     Utils.shortToast(mContext, "${it.firstName} insert failed")
                     insertUserFailure.value = null
+                }
+            })
+
+            connectivityChanged.observe(this@MainFragment, Observer {
+                if (page.value in 1..4) {
+                    getUser()
+                } else {
+                    getAllUser()
                 }
             })
         }

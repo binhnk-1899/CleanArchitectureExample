@@ -19,7 +19,7 @@ interface UserDao {
     fun getUserByName(key: String): List<UserEntity>
 
     @Query("SELECT * FROM users")
-    fun getALlUser(): Flowable<List<UserEntity>>
+    fun getALlUser(): Single<List<UserEntity>>
 
     @Insert
     fun insertUserByRx(user: UserEntity): Long

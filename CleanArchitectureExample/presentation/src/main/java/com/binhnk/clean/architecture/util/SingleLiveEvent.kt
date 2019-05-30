@@ -6,7 +6,7 @@ import androidx.lifecycle.Observer
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
- * Description: Custom mutable live data that used for single event
+ * Description: Custom mutable live clientData that used for single event
  *              such as navigation (for configuration change), show toast..
  */
 class SingleLiveEvent<T> : MutableLiveData<T>() {
@@ -27,8 +27,8 @@ class SingleLiveEvent<T> : MutableLiveData<T>() {
     }
 
     /**
-     * Single event for no data input. Make call more clear
-     * Example: navigation with no data: SingleLiveEvent<Unit>()
+     * Single event for no clientData input. Make call more clear
+     * Example: navigation with no clientData: SingleLiveEvent<Unit>()
      */
     fun call() {
         value = null

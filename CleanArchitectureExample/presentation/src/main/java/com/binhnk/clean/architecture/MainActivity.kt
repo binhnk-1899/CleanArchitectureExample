@@ -1,6 +1,9 @@
 package com.binhnk.clean.architecture
 
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.transition.AutoTransition
 import android.transition.TransitionManager
@@ -44,8 +47,22 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
         }
 
         initAction()
+
+        registerReceiver(object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                when(intent!!.action) {
+                    "android.net.conn.CONNECTIVITY_CHANGE" -> {
+                        viewModel.connectivityChanged.call()
+                    }
+                }
+            }
+
+        }, IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"))
     }
 
+    /**
+     * init action for view
+     */
     private fun initAction() {
         im_storage.setOnClickListener {
             toolbarConstraint2.clone(mContext, R.layout.storage_toolbar)
