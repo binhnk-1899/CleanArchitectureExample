@@ -13,7 +13,8 @@ import com.binhnk.clean.architecture.model.UserItem
 import kotlinx.android.synthetic.main.fragment_main.*
 import org.koin.androidx.viewmodel.ext.sharedViewModel
 
-class MainFragment : BaseFragment<com.binhnk.clean.architecture.databinding.FragmentMainBinding, MainViewModel>() {
+class MainFragment :
+    BaseFragment<com.binhnk.clean.architecture.databinding.FragmentMainBinding, MainViewModel>() {
     private val mContext: Context by lazy { activity!!.applicationContext }
 
     override val viewModel: MainViewModel by sharedViewModel()
@@ -29,7 +30,7 @@ class MainFragment : BaseFragment<com.binhnk.clean.architecture.databinding.Frag
 
         swipe_refresh_layout.isEnabled = false
         rv_user.layoutManager = LinearLayoutManager(mContext, RecyclerView.VERTICAL, false)
-        val mAdapter = UserAdapter(mContext, false, object : UserAdapter.Callback {
+        val mAdapter = UserAdapter(mContext, true, object : UserAdapter.Callback {
             override fun onItemClicked(mUserClicked: UserItem) {
                 viewModel.insertUserToDB(mUserClicked)
             }
@@ -44,6 +45,7 @@ class MainFragment : BaseFragment<com.binhnk.clean.architecture.databinding.Frag
         viewModel.run {
             data.observe(this@MainFragment, Observer {
                 mAdapter.updateAdapter(ArrayList(it))
+                rv_user.smoothScrollToPosition(0)
                 if (it.isNullOrEmpty()) {
                     tv_error.visibility = View.VISIBLE
                 } else {
