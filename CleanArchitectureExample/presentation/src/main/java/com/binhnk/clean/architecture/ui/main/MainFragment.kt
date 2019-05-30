@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.binhnk.clean.architecture.R
 import com.binhnk.clean.architecture.base.BaseFragment
 import com.binhnk.clean.architecture.model.UserItem
+import com.binhnk.clean.architecture.util.Utils
+import com.bumptech.glide.util.Util
 import kotlinx.android.synthetic.main.fragment_main.*
 import org.koin.androidx.viewmodel.ext.sharedViewModel
 
@@ -36,7 +38,7 @@ class MainFragment :
             }
 
             override fun onItemLongClicked(mUserClicked: UserItem) {
-
+                Utils.shortToast(mContext, "${mUserClicked.page}")
             }
 
         })
@@ -64,6 +66,21 @@ class MainFragment :
 
             loading.observe(this@MainFragment, Observer {
                 swipe_refresh_layout.isRefreshing = it
+            })
+
+            insertUserSuccess.observe(this@MainFragment, Observer {
+                if (it != null) {
+                    mAdapter.updateStatePosition(it.id)
+                    Utils.shortToast(mContext, "${it.firstName} was inserted into database")
+                    insertUserSuccess.value = null
+                }
+            })
+
+            insertUserFailure.observe(this@MainFragment, Observer {
+                if (it != null) {
+                    Utils.shortToast(mContext, "${it.firstName} insert failed")
+                    insertUserFailure.value = null
+                }
             })
         }
     }

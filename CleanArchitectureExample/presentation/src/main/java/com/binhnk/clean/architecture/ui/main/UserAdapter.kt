@@ -85,18 +85,18 @@ class UserAdapter(
             for (s in payloads) {
                 if (s == "update_check") {
                     val mObj = dataList[position]
-//                    if (showChecking) {
-//                        if (mObj.addedInDB) {
-//                            holder.tvUserName.setTextColor(ContextCompat.getColor(mContext, R.color.colorPrimary))
-//                            holder.imChecked.visibility = View.VISIBLE
-//                        } else {
-//                            holder.tvUserName.setTextColor(Color.BLACK)
-//                            holder.imChecked.visibility = View.INVISIBLE
-//                        }
-//                    } else {
-//                        holder.tvUserName.setTextColor(Color.BLACK)
-//                        holder.imChecked.visibility = View.INVISIBLE
-//                    }
+                    if (showChecking) {
+                        if (mObj.addedInDB) {
+                            holder.tvUserName.setTextColor(ContextCompat.getColor(mContext, R.color.colorPrimary))
+                            holder.imChecked.visibility = View.VISIBLE
+                        } else {
+                            holder.tvUserName.setTextColor(Color.BLACK)
+                            holder.imChecked.visibility = View.INVISIBLE
+                        }
+                    } else {
+                        holder.tvUserName.setTextColor(Color.BLACK)
+                        holder.imChecked.visibility = View.INVISIBLE
+                    }
                 }
             }
         }
@@ -115,6 +115,14 @@ class UserAdapter(
                 }
             }
             return -1
+        }
+    }
+
+    fun updateStatePosition(userID: Int) {
+        val pos = getItemPosition(userID = userID)
+        if (pos != -1) {
+            dataList[pos].addedInDB = true
+            notifyItemChanged(pos,"update_check")
         }
     }
 

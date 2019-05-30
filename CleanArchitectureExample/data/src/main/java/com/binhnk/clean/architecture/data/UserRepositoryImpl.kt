@@ -1,6 +1,6 @@
 package com.binhnk.clean.architecture.data
 
-import com.binhnk.clean.architecture.data.dao.UserDAO
+import com.binhnk.clean.architecture.data.dao.UserDao
 import com.binhnk.clean.architecture.data.model.UserEntityMapper
 import com.binhnk.clean.architecture.data.remote.api.UserApi
 import com.binhnk.clean.architecture.domain.model.User
@@ -9,7 +9,7 @@ import io.reactivex.Single
 
 class UserRepositoryImpl(
     private val userApi: UserApi,
-    private val userDao: UserDAO,
+    private val userDao: UserDao,
     private val userEntityMapper: UserEntityMapper
 ) : UserRepository {
 

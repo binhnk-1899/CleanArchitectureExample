@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Clean Architecture Example</string>
+    <string name="user_storage">User storage</string>
 </resources>

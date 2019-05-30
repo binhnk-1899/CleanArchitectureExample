@@ -10,6 +10,7 @@ import com.binhnk.clean.architecture.domain.usecase.user.QueryUserUseCase
 import com.binhnk.clean.architecture.model.UserItem
 import com.binhnk.clean.architecture.model.UserItemMapper
 import com.binhnk.clean.architecture.rx.SchedulerProvider
+import com.binhnk.clean.architecture.util.SingleLiveEvent
 import io.reactivex.Completable
 import io.reactivex.CompletableObserver
 import io.reactivex.Single
@@ -31,6 +32,8 @@ class MainViewModel(
     val loading = MutableLiveData<Boolean>().apply {
         postValue(false)
     }
+    val insertUserSuccess = MutableLiveData<UserItem>()
+    val insertUserFailure = MutableLiveData<UserItem>()
 
     /**
      * get user per page
@@ -59,6 +62,7 @@ class MainViewModel(
             .observeOn(schedulerProvider.ui())
             .map { users ->
                 users.map { user ->
+                    user.page = page
                     checkUserState(userItemMapper.mapToPresentation(user))
                 }
             }
@@ -81,12 +85,6 @@ class MainViewModel(
             Function4<List<UserItem>, List<UserItem>, List<UserItem>, List<UserItem>, List<UserItem>> { t1, t2, t3, t4 ->
                 collectAllList(t1, t2, t3, t4)
             })
-//            .map {
-//                for (u in it) {
-//                    checkUserState(u)
-//                }
-//                it
-//            }
             .subscribeOn(schedulerProvider.io())
             .observeOn(schedulerProvider.ui())
             .doFinally { loading.value = false }
@@ -163,6 +161,7 @@ class MainViewModel(
             .observeOn(schedulerProvider.ui())
             .subscribe(object : CompletableObserver {
                 override fun onComplete() {
+                    insertUserSuccess.value = mUser
                     Log.e("Ahihi", "Insert Complete")
                 }
 
@@ -171,6 +170,7 @@ class MainViewModel(
                 }
 
                 override fun onError(e: Throwable) {
+                    insertUserFailure.value = mUser
                     Log.e("Ahihi", "Insert Error")
                 }
             })

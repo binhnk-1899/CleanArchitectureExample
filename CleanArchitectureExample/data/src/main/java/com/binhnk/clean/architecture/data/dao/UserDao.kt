@@ -7,7 +7,7 @@ import io.reactivex.Flowable
 import io.reactivex.Single
 
 @Dao
-interface UserDAO {
+interface UserDao {
 
     @Query("SELECT * FROM users WHERE id = :userId")
     fun getUserByUserId(userId: Int): Single<UserEntity?>

@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.binhnk.clean.architecture.data.Constants
 import com.binhnk.clean.architecture.data.UserRepositoryImpl
-import com.binhnk.clean.architecture.data.dao.UserDAO
+import com.binhnk.clean.architecture.data.dao.UserDao
 import com.binhnk.clean.architecture.data.local.db.UserDatabase
 import com.binhnk.clean.architecture.data.model.UserEntityMapper
 import com.binhnk.clean.architecture.data.remote.api.UserApi
@@ -21,7 +21,7 @@ val repositoryModules = module {
 
 fun createItemRepositoryImpl(
     userApi: UserApi,
-    userDao: UserDAO
+    userDao: UserDao
 ): UserRepositoryImpl =
     UserRepositoryImpl(userApi, userDao, UserEntityMapper())
 
@@ -39,4 +39,4 @@ fun createAppDatabase(dbName: String, context: Context) =
         .allowMainThreadQueries()
         .build()
 
-fun createUserDao(db: UserDatabase): UserDAO = db.userDAO()
+fun createUserDao(db: UserDatabase): UserDao = db.userDAO()
